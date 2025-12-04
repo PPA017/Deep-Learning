@@ -95,10 +95,14 @@ def get_test_faces():
         "DF": [],
         "DM": []
     }
+    # Get the parent directory of utils folder (which is Laboratory 02)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    parent_dir = os.path.dirname(script_dir)
+    faces_dir = os.path.join(parent_dir, "data", "faces")
+    
     for key in images.keys():
-        files = glob.glob(os.path.join("./data", "faces", key, "*.png"))
+        files = glob.glob(os.path.join(faces_dir, key, "*.png"))
         for file in sorted(files):
             image = cv2.resize(cv2.imread(file), (64,64))[:,:,::-1]/255.
             images[key].append(image)
-
     return images["LF"], images["LM"], images["DF"], images["DM"]
