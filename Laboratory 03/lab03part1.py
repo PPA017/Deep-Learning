@@ -137,6 +137,48 @@ print(f"In features: {len(effnetb3.classifier.state_dict()['1.weight'][0])}")
 
 OUT_FEATURES = len(class_names)
 
+def create_effnetb0():
+    # 1. Get the base model with pretrained weights and send to target device
+    weights = torchvision.models.EfficientNet_B0_Weights.DEFAULT
+    model = torchvision.models.efficientnet_b0(weights=weights).to(device)
+
+    # 2. Freeze the base model layers
+    for param in model.features.parameters():
+        param.requires_grad = False
+
+    # 3. Set the seeds
+    set_seeds()
+
+    # 4. Change the classifier head
+    model.classifier = nn.Sequential(
+        nn.Dropout(p=0.2),
+        nn.Linear(in_features=1280, out_features=OUT_FEATURES)
+    ).to(device)
+
+    # 5. Give the model a name
+    model.name = "effnetb0"
+    print(f"[INFO] Created new {model.name} model.")
+    return model
+
+# Create an EffNetB2 feature extractor
+def create_effnetb2():
+    weights = torchvision.models.EfficientNet_B2_Weights.DEFAULT
+    model = torchvision.models.efficientnet_b2(weights=weights).to(device)
+
+    for param in model.features.parameters():
+        param.requires_grad = False
+
+    set_seeds()
+
+    model.classifier = nn.Sequential(
+        nn.Dropout(p=0.3),
+        nn.Linear(in_features=1408, out_features=OUT_FEATURES)
+    ).to(device)
+
+    model.name = "effnetb2"
+    print(f"[INFO] Created new {model.name} model.")
+    return model
+
 def create_effnetb3():
     weights = torchvision.models.EfficientNet_B3_Weights.DEFAULT
     model = torchvision.models.efficientnet_b3(weights=weights).to(device)
